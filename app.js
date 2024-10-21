@@ -62,26 +62,25 @@ async function showIntro() {
     let currentId = parseInt(startId);
     for (let i = 0; i < numClasses; i++) {
     const classUrl = `${baseCourseUrl}${currentId}`;
-    console.log(`Acessando aula ${i + 1}: ${classUrl}`);
+    console.log(chalk.yellowBright(`Acessando aula ${i + 1}: ${classUrl}`));
 
     await page.goto(classUrl);
-    await page.waitForSelector('button[name="Concluir aula"]');
 
-    // Seleciona o botão "Concluir Aula" pelo texto
-    const button = await page.evaluate(() => {
-        const buttons = Array.from(document.querySelectorAll('button[name="Concluir aula"]'));
-        return buttons
-    });
+      // Aguarde até que o footer e a div estejam presentes
+  await page.waitForSelector('footer div'); // Aguarda a presença da div dentro do footer
+
+  // Selecione o botão que está dentro do footer e da div
+  const button = await page.$('footer div button[class="focus-visible:!outline-secondary font-bold transition-colors duration-200 focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 disabled:cursor-not-allowed px-[18px] py-[6px] text-sm rounded-full border-circle-button bg-circle-button text-circle-button hover:border-circle-button-hover hover:bg-circle-button-hover disabled:border-disabled disabled:bg-disabled border w-44 !px-3"]');
 
     if (button) {
       await button.click(); // Clica no botão encontrado
-        console.log(`Aula ${i + 1} concluída.`);
+        console.log(chalk.greenBright(`Aula ${i + 1} concluída.`));
     } else {
-        console.log("Botão 'Concluir Aula' não encontrado.");
+        console.log(chalk.redBright("Botão 'Concluir Aula' não encontrado."));
     }
 
     currentId++; // Incrementa o ID da aula
-    await new Promise(r => setTimeout(r, 3000)); // Delay de 2 segundos
+    await new Promise(r => setTimeout(r, 1000)); // Delay de 2 segundos
 
 }
 
