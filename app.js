@@ -15,7 +15,7 @@ async function showIntro() {
 
     console.log(
         chalk.red(
-            figlet.textSync('Auto Progress', { horizontalLayout: 'default' })
+            figlet.textSync('Auto Progress', { horizontalLayout: 'default', defaultViewport: { width: 1366, height: 768 } })
         )
     );
 
@@ -25,21 +25,18 @@ async function showIntro() {
     console.log(chalk.cyanBright('Passos para execução da automação:'));
     console.log(chalk.cyanBright('1. Abrir o navegador'));
     console.log(chalk.cyanBright('2. Acessar a plataforma'));
-    console.log(chalk.cyanBright('3. Fazer login'));
+    console.log(chalk.cyanBright('3. Realize o login'));
+    console.log(chalk.cyanBright('3. Acesse o Curso que deseja automatizar o progresso'));
 
-  // Pergunta se o usuário já está logado
-    const { loggedIn } = await inquirer.prompt({
-    type: 'confirm',
-    name: 'loggedIn',
-    message: chalk.cyanBright('Você já está logado na plataforma?'),
-    });
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
 
-    if (!loggedIn) {
-    console.log(chalk.redBright('Por favor, faça login antes de continuar.'));
-    return;
-    }
+    await page.goto('https://comunidade.onebitcode.com/sign_in?post_login_redirect=https%3A%2F%2Fcomunidade.onebitcode.com%2Ffeed#email');
 
-  // Pergunta quantas aulas o curso tem e a URL da primeira aula
+    await page.waitForNavigation();
+
+    console.log('Login realizado com sucesso!');
+
     const { numClasses, baseCourseUrl, startId } = await inquirer.prompt([
     {
         type: 'input',
@@ -62,24 +59,30 @@ async function showIntro() {
 
 ]);
 
-  // Automação com Puppeteer
-    const browser = await puppeteer.launch({ headless: false });
-    const page = await browser.newPage();
-
     let currentId = parseInt(startId);
     for (let i = 0; i < numClasses; i++) {
     const classUrl = `${baseCourseUrl}${currentId}`;
-    console.log(chalk.yellowBright(`Acessando aula ${i + 1}: ${classUrl}`));
+    console.log(`Acessando aula ${i + 1}: ${classUrl}`);
 
     await page.goto(classUrl);
+    await page.waitForSelector('button[name="Concluir aula"]');
 
-    // Aqui você pode ajustar o seletor do botão de "concluir aula"
-    await page.waitForSelector('button.concluir-aula'); 
-    await page.click('button.concluir-aula');
-    console.log(chalk.yellowBright(`Aula ${i + 1} concluída.`));
+    // Seleciona o botão "Concluir Aula" pelo texto
+    const button = await page.evaluate(() => {
+        const buttons = Array.from(document.querySelectorAll('button[name="Concluir aula"]'));
+        return buttons
+    });
+
+    if (button) {
+      await button.click(); // Clica no botão encontrado
+        console.log(`Aula ${i + 1} concluída.`);
+    } else {
+        console.log("Botão 'Concluir Aula' não encontrado.");
+    }
 
     currentId++; // Incrementa o ID da aula
-    await new Promise(r => setTimeout(r, 2000)); // Delay de 2 segundos
+    await new Promise(r => setTimeout(r, 3000)); // Delay de 2 segundos
+
 }
 
     await browser.close();
