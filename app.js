@@ -80,7 +80,7 @@ async function showIntro() {
     }
 
     currentId++; // Incrementa o ID da aula
-    await new Promise(r => setTimeout(r, 1000)); // Delay de 2 segundos
+    await new Promise(r => setTimeout(r, 5000)); // Delay de 2 segundos
 
 }
 
