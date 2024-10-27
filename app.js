@@ -70,7 +70,7 @@ async function showIntro() {
   await page.waitForSelector('footer div'); // Aguarda a presença da div dentro do footer
 
   // Selecione o botão que está dentro do footer e da div
-  const button = await page.$('footer div button[class="focus-visible:!outline-secondary font-bold transition-colors duration-200 focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 disabled:cursor-not-allowed px-[18px] py-[6px] text-sm rounded-full border-circle-button bg-circle-button text-circle-button hover:border-circle-button-hover hover:bg-circle-button-hover disabled:border-disabled disabled:bg-disabled border w-44 !px-3"]');
+    const button = await page.$('footer div button[class="focus-visible:!outline-secondary font-bold transition-colors duration-200 focus-visible:!outline focus-visible:!outline-2 focus-visible:!outline-offset-2 disabled:cursor-not-allowed px-[18px] py-[6px] text-sm rounded-full border-circle-button bg-circle-button text-circle-button hover:border-circle-button-hover hover:bg-circle-button-hover disabled:border-disabled disabled:bg-disabled border w-44 !px-3"]');
 
     if (button) {
       await button.click(); // Clica no botão encontrado
